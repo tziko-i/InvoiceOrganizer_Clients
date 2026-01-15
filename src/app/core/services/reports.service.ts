@@ -27,7 +27,7 @@ export class ReportsService {
   getCategoryBreakdown(): Observable<any> {
     return this.http.get(`${this.apiUrl}/categories`);
   }
-  getVendorComparison(): Observable<any> {
+  getVendorComparison(): Observable<any> {//// משוווה בין הספקים
     return this.http.get(`${this.apiUrl}/vendors/comparison`);
   }
 }

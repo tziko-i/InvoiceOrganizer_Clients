@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
-
+import { HomeComponent } from './home/home';
+import { RegisterComponent } from './register/register';
+import { LoginComponent } from './login/login';
 // אם המסכים עדיין לא קיימים – ניצור אותם עוד רגע
-import { Dashboard } from './features/dashboard/dashboard';
+import { DashboardComponent } from './features/dashboard/dashboard';
 import { Upload } from './features/upload/upload';
 import { Invoices } from './features/invoices/invoices';
 import { Reports } from './features/reports/reports';
@@ -10,15 +12,18 @@ import { Settings } from './features/settings/settings/settings';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'dashboard',
     component: MainLayout,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard },
+     
+      { path: '', component: DashboardComponent },
       { path: 'upload', component: Upload },
       { path: 'invoices', component: Invoices },
       { path: 'reports', component: Reports },
       { path: 'settings', component: Settings },
     ],
   },
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
 ];

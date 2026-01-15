@@ -1,23 +1,23 @@
-export interface Invoice {
-id: number;
-invoiceNumber: string;
-vendor: string;
-vendorId?: number;
-date: Date | string;
-amount: number;
-currency: string;
-category: string;
-categoryId?: number;
-status: InvoiceStatus;
-confidence: number;
-month: string;
-year: number;
-pdfUrl?: string;
-imageUrl?: string;
-ocrData?: OCRData;
-createdAt: Date;
-updatedAt: Date;
-}
+    export interface Invoice {
+    id: number;
+    invoiceNumber: string;
+    vendor: string;
+    vendorId?: number;
+    date: Date | string;
+    amount: number;
+    currency: string;
+    category: string;
+    categoryId?: number;
+    status: InvoiceStatus;
+    confidence: number;
+    month: string;
+    year: number;
+    pdfUrl?: string;
+    imageUrl?: string;
+    ocrData?: OCRData;
+    createdAt: Date;
+    updatedAt: Date;
+    }
 export enum InvoiceStatus {
 Pending = 'pending',
 Processing = 'processing',

@@ -16,7 +16,7 @@ export class ExportService {
 
     this.addJsonDataToSheet(worksheet, data);
     // 3. כתיבה ל-Buffer ושמירה
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer = await workbook.xlsx.writeBuffer(); //Buffer === משתנה שמכיל את כל הנתונים של הקובץ בפורמט בינארי. 
     this.saveAsExcelFile(buffer, filename, `xlsx`);
   }
   /**
