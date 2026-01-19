@@ -7,12 +7,17 @@ import { ExtractedData } from '../models/invoice.model';
   providedIn: 'root',
 })
 export class OCRService {
-  private apiUrl = 'http://localhost:5000/api/ocr';
+  private apiUrl = 'http://localhost:5042/api/ocr';
+
   constructor(private http: HttpClient) {}
-  process(fileId: string): Observable<ExtractedData> {
-    return this.http.post<ExtractedData>(`${this.apiUrl}/process`, { fileId });
+
+  process(uploadedDocumentId: number): Observable<ExtractedData> {
+    return this.http.post<ExtractedData>(`${this.apiUrl}/process`, {
+      UploadedDocumentId: uploadedDocumentId,
+    });
   }
-  validate(data: ExtractedData): Observable<{ isValid: boolean; errors: string[] }> {
-    return this.http.post<{ isValid: boolean; errors: string[] }>(`${this.apiUrl}/validate`, data);
+
+  validate(data: ExtractedData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/validate`, data);
   }
 }

@@ -6,20 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UploadService {
-  private apiUrl = 'http://localhost:5000/api/upload';
+  private apiUrl = 'http://localhost:5042/api/upload';
+
   constructor(private http: HttpClient) {}
 
-  upload(formData: FormData): Observable<HttpEvent<any>> {
-    return this.http.post(this.apiUrl, formData, {
-      reportProgress: true,
-      observe: 'events',
-    });
-  }
-  uploadMultiple(files: File[]): Observable<any> {
+  upload(file: File, userId: string): Observable<any> {
     const formData = new FormData();
-    files.forEach((file, index) => {
-      formData.append(`files[${index}]`, file);
-    });
-    return this.upload(formData);
+    formData.append('File', file);
+    formData.append('UserId', userId);
+
+    return this.http.post(this.apiUrl, formData);
   }
 }
