@@ -11,19 +11,18 @@ import { Reports } from './features/reports/reports';
 import { Settings } from './features/settings/settings/settings';
 
 export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   {
-    path: 'dashboard',
+    path: '',
     component: MainLayout,
     children: [
-     
-      { path: '', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'upload', component: Upload },
       { path: 'invoices', component: Invoices },
       { path: 'reports', component: Reports },
       { path: 'settings', component: Settings },
     ],
   },
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
 ];

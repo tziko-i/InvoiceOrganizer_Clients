@@ -12,7 +12,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class SidebarComponent {
   isOpen = false; // משתנה לניהול מצב התפריט במובייל
   menuItems = [
-    { label: 'דשבורד', icon: 'pi pi-home', route: '/dashboard' },
+    { label: 'דשבורד', icon: 'pi pi-home', route: '' },
     { label: 'העלאת חשבוניות', icon: 'pi pi-cloud-upload', route: '/upload' },
     { label: 'חשבוניות', icon: 'pi pi-file', route: '/invoices' },
     { label: 'דוחות', icon: 'pi pi-chart-bar', route: '/reports' },

@@ -39,7 +39,14 @@ export class Invoices {
 
   constructor(private invoiceService: InvoiceService) {
     // טעינה ראשונית
-    this.allInvoices.set(this.invoiceService.getAll());
+    this.loadInvoices();
+  }
+
+  loadInvoices() {
+    this.invoiceService.getAll().subscribe({
+      next: (data) => this.allInvoices.set(data),
+      error: (err) => console.error('Failed to load invoices', err)
+    });
   }
 
   onSearchChange(value: string) {
@@ -55,7 +62,11 @@ export class Invoices {
   }
 
   deleteInvoice(id: number) {
-    this.invoiceService.delete(id);
-    this.allInvoices.set(this.invoiceService.getAll());
+    this.invoiceService.delete(id).subscribe({
+      next: () => {
+        this.loadInvoices(); // Refresh list after deletion
+      },
+      error: (err) => console.error('Failed to delete invoice', err)
+    });
   }
 }

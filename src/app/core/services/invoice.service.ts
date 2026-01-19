@@ -1,69 +1,20 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Invoice, InvoiceStatus } from '../models/invoice.model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class InvoiceService {
-    // בשלב ראשון: נתוני דמו. אחרי זה תחליף ב־HTTP ל־API האמיתי
- private readonly _invoices = signal<Invoice[]>([
-    {
-      id: 1,
-      invoiceNumber: 'INV-001',
-      vendor: 'ספק א',
-      date: '2025-11-01',
-      amount: 450.5,
-      currency: 'ILS',
-      category: 'שירותים',
-      status: InvoiceStatus.Verified,
+  private apiUrl = 'http://localhost:5042/api/invoices';
 
-      // השדות שהיו חסרים:
-      confidence: 0.95,
-      month: '11',         // או '2025-11' או 'נובמבר' – לפי איך שהגדרת במודל
-      year: 2025,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      invoiceNumber: 'INV-002',
-      vendor: 'ספק ב',
-      date: '2025-11-10',
-      amount: 1200,
-      currency: 'ILS',
-      category: 'משרד',
-      status: InvoiceStatus.Pending,
-
-      confidence: 0.8,
-      month: '11',
-      year: 2025,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
-
+  // We keep a signal for state management if needed, but primarily work with Observables now
+  private _invoices = signal<Invoice[]>([]);
   invoices = this._invoices.asReadonly();
 
-  getAll(): Invoice[] {
-    return this._invoices();
-  }
-
-  add(invoice: Invoice) {
-    this._invoices.update(list => [...list, invoice]);
-  }
-
-  update(updated: Invoice) {
-    this._invoices.update(list =>
-      list.map(inv => (inv.id === updated.id ? updated : inv)),
-    );
-  }
-
-  delete(id: number) {
-    this._invoices.update(list => list.filter(inv => inv.id !== id));
-  }
-  /*private apiUrl = 'http://localhost:5000/api/invoices';
   constructor(private http: HttpClient) {}
+
   getAll(filters?: any): Observable<Invoice[]> {
     let params = new HttpParams();
     if (filters) {
@@ -73,21 +24,52 @@ export class InvoiceService {
         }
       });
     }
-    return this.http.get<Invoice[]>(this.apiUrl, { params });
+
+    return this.http.get<any[]>(this.apiUrl, { params }).pipe(
+      map(backendInvoices => backendInvoices.map(this.mapBackendToFrontend))
+    );
   }
+
   getById(id: number): Observable<Invoice> {
-    return this.http.get<Invoice>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(this.mapBackendToFrontend)
+    );
   }
+
   create(invoice: Partial<Invoice>): Observable<Invoice> {
-    return this.http.post<Invoice>(this.apiUrl, invoice);
+    // For now, we might need to adapt frontend model back to backend DTO if they differ significantly
+    // But basic fields might match. Let's send what we have for now or adapt if specific DTO is known.
+    // Based on Controller: expects Invoice entity.
+    return this.http.post<any>(this.apiUrl, invoice).pipe(
+        map(this.mapBackendToFrontend)
+    );
   }
-  update(invoice: Invoice): Observable<Invoice> {
-    return this.http.put<Invoice>(`${this.apiUrl}/${invoice.id}`, invoice);
+
+  update(invoice: Invoice): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${invoice.id}`, invoice);
   }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  updateStatus(id: number, status: InvoiceStatus): Observable<Invoice> {
-    return this.http.patch<Invoice>(`${this.apiUrl}/${id}/status`, { status });
-  }*/
+
+  // Adapter method
+  private mapBackendToFrontend(backendInvoice: any): Invoice {
+    return {
+      id: backendInvoice.id,
+      invoiceNumber: backendInvoice.invoiceNumber ? backendInvoice.invoiceNumber.toString() : '',
+      vendor: backendInvoice.supplier ? backendInvoice.supplier.name : 'Unknown Vendor',
+      vendorId: backendInvoice.supplierId,
+      date: backendInvoice.invoiceDate,
+      amount: backendInvoice.total,
+      currency: 'ILS', // Default as backend doesn't seem to have currency
+      category: 'General', // List endpoint doesn't return items to deduce category
+      status: InvoiceStatus.Verified, // Default as backend doesn't have status
+      confidence: 1,
+      month: backendInvoice.invoiceDate ? backendInvoice.invoiceDate.split('-')[1] : '',
+      year: backendInvoice.invoiceDate ? parseInt(backendInvoice.invoiceDate.split('-')[0]) : 0,
+      createdAt: new Date(), // Not in backend response
+      updatedAt: new Date(), // Not in backend response
+    };
+  }
 }
